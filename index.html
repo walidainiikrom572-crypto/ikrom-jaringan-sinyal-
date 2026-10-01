@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚠️ JARINGAN MAKSIMAL — IKROM WALIDAINI ⚠️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ungu: #9933ff;
+            --merah-muda: #ff4488;
+            --biru-cerah: #00ccff;
+            --hijau: #00ff88;
+            --emas: #ffd700;
+            --merah: #ff003c;
+            --kuning: #ffcc00;
+            --abu: #666666;
+            --hitam: #000005;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            width: 100vw; height: 100vh; overflow: hidden;
+            background: radial-gradient(ellipse at center, #050510 0%, #000 70%);
+            font-family: 'Share Tech Mono', monospace; color: #fff;
+        }
+
+        /* === KANVAS BOLA PARTIKEL === */
+        .wadah-kanvas {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1; pointer-events: none;
+        }
+        #bolaPartikel { width: 100%; height: 100%; }
+
+        /* === KAMERA REKAM === */
+        .kamera-rekam {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0,0,0,0.75);
+            border: 1px solid rgba(255,0,60,0.4);
+            padding: 8px 16px;
+            border-radius: 30px;
+            box-shadow: 0 0 20px rgba(255,0,60,0.25);
+        }
+        .titik-rekam {
+            width: 10px; height: 10px;
+            background: var(--merah);
+            border-radius: 50%;
+            animation: kedipRekam 1s infinite;
+            box-shadow: 0 0 10px var(--merah);
+        }
+        @keyframes kedipRekam {
+            0%,100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.7); }
+        }
+        .ikon-kamera {
+            font-size: 1.1rem;
+        }
+        .teks-rekam {
+            font-size: 0.75rem;
+            color: var(--merah);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .penghitung-rekam {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-left: 6px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        /* === DATA STREAM === */
+        .hacker-latar {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+        .kolom-data {
+            position: absolute; top: -100%; width: 14px; height: 100%;
+            font-size: 10px; line-height: 14px;
+            color: rgba(0,255,136,0.55);
+            text-shadow: 0 0 8px var(--hijau);
+            animation: jatuhData 10s linear infinite;
+            white-space: pre-wrap; word-break: break-all;
+        }
+        @keyframes jatuhData {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(200%); }
+        }
+
+        /* === SCAN & NOISE === */
+        .scan-layar {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                transparent, transparent 2px, rgba(0,255,136,0.02) 2px, rgba(0,255,136,0.02) 4px
+            );
+            pointer-events: none; z-index: 10;
+        }
+        .scan-bergerak {
+            position: fixed; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0,255,136,0.12);
+            animation: turun 5s linear infinite;
+            pointer-events: none; z-index: 11;
+        }
+        @keyframes turun { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* === LAPISAN ATAS === */
+        .lapisan-atas {
+            position: relative; z-index: 15; height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: space-between;
+            padding: 60px 15px 20px; text-align: center;
+        }
+
+        .judul-besar {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 4vw, 2.5rem); font-weight: 900;
+            text-transform: uppercase; letter-spacing: 3px;
+            background: linear-gradient(135deg, var(--emas), var(--hijau), var(--biru-cerah), var(--ungu));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: kilauTeks 3s ease-in-out infinite alternate;
+        }
+        @keyframes kilauTeks {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.3); }
+        }
+        .sub-judul {
+            color: var(--biru-cerah); font-size: 0.85rem;
+            letter-spacing: 2px; margin-top: 6px; opacity: 0.85;
+        }
+
+        /* Kotak Utama */
+        .kotak-info {
+            background: rgba(0,0,0,0.55);
+            border: 1px solid rgba(0,255,136,0.25);
+            border-radius: 12px; padding: 15px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 20px rgba(0,255,136,0.1);
+            max-width: 360px; margin: 0 auto;
+        }
+
+        /* Daftar Negara & Kekuatan Sinyal */
+        .daftar-negara {
+            max-height: 220px; overflow-y: auto; margin-top: 10px;
+            border-radius: 8px; background: rgba(0,0,0,0.3); padding: 8px;
+        }
+        .daftar-negara::-webkit-scrollbar { width: 3px; }
+        .daftar-negara::-webkit-scrollbar-thumb { background: var(--hijau); border-radius: 3px; }
+
+        .baris-negara {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 10px; margin-bottom: 4px;
+            border-radius: 6px; background: rgba(255,255,255,0.03);
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        .baris-negara:hover { background: rgba(0,255,136,0.08); }
+
+        .nama-negara { text-align: left; flex: 1; }
+        .indikator { display: flex; gap: 2px; align-items: center; }
+        .batang {
+            width: 4px; border-radius: 1px; transition: all 0.3s ease;
+        }
+        .batang.kuat { background: var(--hijau); box-shadow: 0 0 4px var(--hijau); }
+        .batang.sedang { background: var(--kuning); box-shadow: 0 0 4px var(--kuning); }
+        .batang.lemah { background: var(--merah); box-shadow: 0 0 4px var(--merah); }
+        .batang.mati { background: var(--abu); opacity: 0.4; }
+
+        .label-kuat { color: var(--hijau); font-weight: bold; font-size: 0.7rem; }
+        .label-sedang { color: var(--kuning); font-weight: bold; font-size: 0.7rem; }
+        .label-lemah { color: var(--merah); font-weight: bold; font-size: 0.7rem; }
+
+        /* Ringkasan */
+        .ringkasan {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 8px; margin-top: 12px;
+        }
+        .kotak-ringkas {
+            background: rgba(0,0,0,0.4); border-radius: 8px;
+            padding: 10px 6px; text-align: center;
+        }
+        .angka { font-size: 1.1rem; font-weight: bold; }
+        .angka-kuat { color: var(--hijau); }
+        .angka-sedang { color: var(--kuning); }
+        .angka-lemah { color: var(--merah); }
+        .keterangan { font-size: 0.65rem; color: #777; margin-top: 2px; }
+
+        /* Status Bawah */
+        .status-bawah { font-size: 0.7rem; color: #555; margin-top: 10px; }
+        .titik-hidup {
+            display: inline-block; width: 8px; height: 8px;
+            background: var(--hijau); border-radius: 50%; margin-right: 6px;
+            animation: kedip 1.5s infinite;
+        }
+        @keyframes kedip {
+            0%,100% { opacity: 1; box-shadow: 0 0 8px var(--hijau); }
+            50% { opacity: 0.3; }
+        }
+
+        /* Notifikasi */
+        .notifikasi {
+            position: fixed; top: 80px; right: 20px;
+            background: rgba(0,0,0,0.85); border: 1px solid var(--hijau);
+            color: var(--hijau); padding: 10px 14px; border-radius: 8px;
+            font-size: 0.75rem; box-shadow: 0 0 15px rgba(0,255,136,0.3);
+            transform: translateX(120%); transition: transform 0.4s ease; z-index: 30;
+        }
+        .notifikasi.masuk { transform: translateX(0); }
+    </style>
+</head>
+<body>
+    <!-- 📷 KAMERA SEDANG MEREKAM -->
+    <div class="kamera-rekam">
+        <div class="titik-rekam"></div>
+        <span class="ikon-kamera">📷</span>
+        <span class="teks-rekam">REC</span>
+        <span class="penghitung-rekam" id="penghitungRekam">00:00:00</span>
+    </div>
+
+    <!-- Notifikasi -->
+    <div class="notifikasi" id="notifikasi">✅ Sinyal diperbarui</div>
+
+    <!-- Data Stream & Scan -->
+    <div class="hacker-latar" id="hackerLatar"></div>
+    <div class="scan-layar"></div>
+    <div class="scan-bergerak"></div>
+
+    <!-- Bola Partikel -->
+    <div class="wadah-kanvas">
+        <canvas id="bolaPartikel"></canvas>
+    </div>
+
+    <!-- Konten -->
+    <div class="lapisan-atas">
+        <div>
+            <p class="text-xs text-gray-600">SISTEM PUSAT · PEMANTAUAN JARINGAN GLOBAL</p>
+        </div>
+
+        <div>
+            <h1 class="judul-besar">IKROM WALIDAINI</h1>
+            <p class="sub-judul">PUSAT KENDALI SELURUH JARINGAN DUNIA</p>
+        </div>
+
+        <div class="kotak-info">
+            <p class="text-xs text-gray-500 mb-2">📡 KEKUATAN SINYAL PER NEGARA</p>
+
+            <!-- Daftar Negara -->
+            <div class="daftar-negara" id="daftarNegara">
+                <!-- Diisi otomatis lewat JS -->
+            </div>
+
+            <!-- Ringkasan -->
+            <div class="ringkasan">
+                <div class="kotak-ringkas">
+                    <div class="angka angka-kuat" id="jmlKuat">0</div>
+                    <div class="keterangan">Sinyal Kuat</div>
+                </div>
+                <div class="kotak-ringkas">
+                    <div class="angka angka-sedang" id="jmlSedang">0</div>
+                    <div class="keterangan">Sedang</div>
+                </div>
+                <div class="kotak-ringkas">
+                    <div class="angka angka-lemah" id="jmlLemah">0</div>
+                    <div class="keterangan">Lemah/Terputus</div>
+                </div>
+            </div>
+
+            <p class="text-xs text-gray-500 mt-3 italic">
+                "Di mana pun kamu berada, sinyalku akan menjangkaumu. Yang kuat kuperkuat, yang lemah kuperbaiki."<br>
+                <span class="text-yellow-400 not-italic">— Ikrom Walidaini</span>
+            </p>
+        </div>
+
+        <div class="status-bawah">
+            <p><span class="titik-hidup"></span>PEMANTAUAN AKTIF · MEMPERBARUI DATA...</p>
+            <p class="mt-1">© 2026 Ikrom Walidaini · Jaringan Tak Dapat Diputus</p>
+        </div>
+    </div>
+
+    <script>
+        // === ⏱️ PENGHITUNG WAKTU REKAMAN ===
+        let detik = 0, menit = 0, jam = 0;
+        const penghitung = document.getElementById('penghitungRekam');
+        setInterval(() => {
+            detik++;
+            if (detik >= 60) { detik = 0; menit++; }
+            if (menit >= 60) { menit = 0; jam++; }
+            const fJam = String(jam).padStart(2, '0');
+            const fMenit = String(menit).padStart(2, '0');
+            const fDetik = String(detik).padStart(2, '0');
+            penghitung.textContent = `${fJam}:${fMenit}:${fDetik}`;
+        }, 1000);
+
+        // === DATA NEGARA DAN KEKUATAN SINYAL ===
+        const dataNegara = [
+            { nama: "🇮🇩 Indonesia", kekuatan: 5, label: "KUAT" },
+            { nama: "🇺🇸 Amerika Serikat", kekuatan: 5, label: "KUAT" },
+            { nama: "🇯🇵 Jepang", kekuatan: 5, label: "KUAT" },
+            { nama: "🇩🇪 Jerman", kekuatan: 4, label: "KUAT" },
+            { nama: "🇬🇧 Inggris Raya", kekuatan: 4, label: "KUAT" },
+            { nama: "🇦🇺 Australia", kekuatan: 4, label: "KUAT" },
+            { nama: "🇨🇦 Kanada", kekuatan: 4, label: "KUAT" },
+            { nama: "🇫🇷 Prancis", kekuatan: 4, label: "KUAT" },
+            { nama: "🇰🇷 Korea Selatan", kekuatan: 4, label: "KUAT" },
+            { nama: "🇨🇳 Tiongkok", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇧🇷 Brasil", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇷🇺 Rusia", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇮🇹 Italia", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇪🇬 Mesir", kekuatan: 2, label: "LEMAH" },
+            { nama: "🇳🇬 Nigeria", kekuatan: 2, label: "LEMAH" },
+            { nama: "🇿🇦 Afrika Selatan", kekuatan: 2, label: "LEMAH" },
+            { nama: "🇻🇳 Vietnam", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇹🇭 Thailand", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇵🇭 Filipina", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇲🇾 Malaysia", kekuatan: 4, label: "KUAT" },
+            { nama: "🇸🇬 Singapura", kekuatan: 5, label: "KUAT" },
+            { nama: "🇸🇦 Arab Saudi", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇮🇷 Iran", kekuatan: 1, label: "LEMAH" },
+            { nama: "🇦🇫 Afganistan", kekuatan: 1, label: "LEMAH" },
+            { nama: "🇧🇾 Belarus", kekuatan: 2, label: "LEMAH" },
+            { nama: "🇨🇴 Kolombia", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇦🇷 Argentina", kekuatan: 2, label: "LEMAH" },
+            { nama: "🇲🇽 Meksiko", kekuatan: 3, label: "SEDANG" },
+            { nama: "🇳🇱 Belanda", kekuatan: 5, label: "KUAT" },
+            { nama: "🇨🇭 Swiss", kekuatan: 5, label: "KUAT" },
+        ];
+
+        // === RENDER DAFTAR NEGARA ===
+        const wadah = document.getElementById('daftarNegara');
+        let countKuat = 0, countSedang = 0, countLemah = 0;
+
+        dataNegara.forEach(negara => {
+            if (negara.kekuatan >= 4) countKuat++;
+            else if (negara.kekuatan >= 2) countSedang++;
+            else countLemah++;
+
+            const baris = document.createElement('div');
+            baris.className = 'baris-negara';
+
+            // Indikator batang sinyal
+            let batang = '';
+            for (let i = 1; i <= 5; i++) {
+                let kelas = 'batang mati';
+                if (i <= negara.kekuatan) {
+                    if (negara.kekuatan >= 4) kelas = 'batang kuat';
+                    else if (negara.kekuatan >= 2) kelas = 'batang sedang';
+                    else kelas = 'batang lemah';
+                }
+                const tinggi = 6 + (i * 3);
+                batang += `<div class="${kelas}" style="height:${tinggi}px;"></div>`;
+            }
+
+            // Warna label
+            let kelasLabel = 'label-lemah';
+            if (negara.kekuatan >= 4) kelasLabel = 'label-kuat';
+            else if (negara.kekuatan >= 2) kelasLabel = 'label-sedang';
+
+            baris.innerHTML = `
+                <span class="nama-negara">${negara.nama}</span>
+                <div class="indikator">${batang}</div>
+                <span class="${kelasLabel} ml-2">${negara.label}</span>
+            `;
+            wadah.appendChild(baris);
+        });
+
+        // Angka ringkasan
+        document.getElementById('jmlKuat').textContent = countKuat;
+        document.getElementById('jmlSedang').textContent = countSedang;
+        document.getElementById('jmlLemah').textContent = countLemah;
+
+        // === SIMULASI PERUBAHAN DINAMIS ===
+        function perbaruiSinyal() {
+            const idxAcak = Math.floor(Math.random() * dataNegara.length);
+            const negara = dataNegara[idxAcak];
+            
+            // Fluktuasi kecil: naik/turun 1 tingkat
+            const perubahan = Math.random();
+            if (perubahan < 0.3 && negara.kekuatan < 5) negara.kekuatan++;
+            else if (perubahan > 0.7 && negara.kekuatan > 1) negara.kekuatan--;
+
+            // Tampil notifikasi
+            const statusTeks = negara.kekuatan >= 4 ? "KUAT" : negara.kekuatan >= 2 ? "SEDANG" : "LEMAH";
+            const notif = document.getElementById('notifikasi');
+            notif.textContent = `${negara.nama}: Sinyal → ${statusTeks}`;
+            notif.classList.add('masuk');
+            setTimeout(() => notif.classList.remove('masuk'), 2500);
+        }
+        setInterval(perbaruiSinyal, 3500);
+
+        // === DATA STREAM HACKER ===
+        const wadahStream = document.getElementById('hackerLatar');
+        const karakter = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        for (let i = 0; i < 10; i++) {
+            const kolom = document.createElement('div');
+            kolom.className = 'kolom-data';
+            kolom.style.left = `${(i + 1) * 9}%`;
+            kolom.style.animationDelay = `${i * 0.7}s`;
+            kolom.style.animationDuration = `${7 + Math.random() * 5}s`;
+            let teks = '';
+            for (let j = 0; j < 50; j++) teks += karakter[Math.floor(Math.random() * karakter.length)] + '\n';
+            kolom.textContent = teks;
+            wadahStream.appendChild(kolom);
+        }
+
+        // === BOLA PARTIKEL ===
+        const kanvas = document.getElementById('bolaPartikel');
+        const ctx = kanvas.getContext('2d');
+        let lebar, tinggi, partikel = [], waktu = 0;
+
+        function aturUkuran() {
+            lebar = kanvas.width = window.innerWidth;
+            tinggi = kanvas.height = window.innerHeight;
+        }
+        aturUkuran();
+        window.addEventListener('resize', aturUkuran);
+
+        const paletWarna = [
+            { h: 280, s: 100, l: 60 },
+            { h: 330, s: 100, l: 60 },
+            { h: 200, s: 100, l: 55 },
+            { h: 140, s: 100, l: 55 },
+            { h: 50, s: 100, l: 55 },
+        ];
+
+        class Partikel {
+            constructor() {
+                this.jarak = 160 + Math.random() * 80;
+                this.theta = Math.random() * Math.PI * 2;
+                this.phi = Math.acos((Math.random() - 0.5) * 1.6);
+                this.kecepatanTheta = (Math.random() - 0.5) * 0.003;
+                this.kecepatanPhi = (Math.random() - 0.5) * 0.002;
+                this.ukuran = 1 + Math.random() * 2.5;
+                const w = paletWarna[Math.floor(Math.random() * paletWarna.length)];
+                this.h = w.h + (Math.random() - 0.5) * 30;
+                this.s = w.s;
+                this.l = w.l + (Math.random() - 0.5) * 15;
+                this.terang = 0.4 + Math.random() * 0.6;
+            }
+            perbarui() { this.theta += this.kecepatanTheta; this.phi += this.kecepatanPhi; }
+            posisi(p = 0) {
+                return {
+                    x: this.jarak * Math.sin(this.phi) * Math.cos(this.theta + p),
+                    y: this.jarak * Math.cos(this.phi),
+                    z: this.jarak * Math.sin(this.phi) * Math.sin(this.theta + p)
+                };
+            }
+            gambar(pusatX, pusatY, skala, putaran = 0) {
+                const { x, y, z } = this.posisi(putaran);
+                const kedalaman = (z + this.jarak) / (this.jarak * 2);
+                const uk = this.ukuran * kedalaman * skala;
+                ctx.beginPath();
+                ctx.arc(pusatX + x * skala, pusatY - y * skala, uk, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.h}, ${this.s}%, ${this.l}%, ${kedalaman * this.terang})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 2000; i++) partikel.push(new Partikel());
+
+        function gambarLingkaran(pusatX, pusatY, jr, skala, sudut, r, g, b, a) {
+            ctx.save();
+            ctx.translate(pusatX, pusatY);
+            ctx.rotate(sudut);
+            ctx.scale(1, Math.cos(sudut * 0.8));
+            ctx.beginPath();
+            ctx.arc(0, 0, jr * skala, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${r},${g},${b},${a})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function animasi() {
+            waktu += 0.005;
+            ctx.clearRect(0, 0, lebar, tinggi);
+            const px = lebar / 2, py = tinggi / 2, sk = Math.min(lebar, tinggi) / 500;
+            const putar = waktu * 0.3;
+
+            gambarLingkaran(px, py, 200, sk, putar, 0, 255, 136, 0.25);
+            gambarLingkaran(px, py, 200, sk, putar + Math.PI/3, 0, 204, 255, 0.2);
+            gambarLingkaran(px, py, 200, sk, putar + Math.PI*2/3, 255, 68, 136, 0.2);
+
+            partikel.sort((a, b) => a.posisi(putar).z - b.posisi(putar).z);
+            partikel.forEach(p => { p.perbarui(); p.gambar(px, py, sk, putar); });
+            requestAnimationFrame(animasi);
+        }
+        animasi();
+    </script>
+</body>
+</html>
